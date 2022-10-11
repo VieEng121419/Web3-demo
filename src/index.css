@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+#root {
+    background-image: linear-gradient(to bottom, #fbe7f3, #faedf8, #faf4fc, #fcfafe, #ffffff) !important;
+}
+
+.wrapper {
+    background-image: linear-gradient(to bottom, #fbe7f3, #faedf8, #faf4fc, #fcfafe, #ffffff) !important;
+}
+
+.card {
+    background-color: #FFFF;
+}
+
+.center-absolute {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

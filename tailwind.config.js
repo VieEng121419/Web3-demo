@@ -1,12 +1,9 @@
 module.exports = {
-  purge: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
-  mode: "jit",
-  darkMode: false, // or 'media' or 'class'
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
-    extend: {}
+    extend: {},
   },
-  variants: {
-    extend: {}
-  },
-  plugins: [require("@tailwindcss/typography"), require("daisyui")]
-};
+  plugins: [],
+}
