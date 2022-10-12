@@ -66,7 +66,8 @@ export default function App() {
             try {
                 await handleNetworkSwitch("bsc")
                 const accounts = await web3.eth.requestAccounts();
-                const balance = await web3.eth.getBalance(accounts[0]);
+                let balance = await web3.eth.getBalance(accounts[0]);
+                balance = web3.utils.fromWei(balance, 'ether');
                 setWalletAddress(accounts[0]);
                 setBalance(balance);
                 toastConnect();
