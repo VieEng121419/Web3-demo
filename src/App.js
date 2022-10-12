@@ -4,6 +4,45 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const Web3 = require("web3");
 
+const networks = {
+  polygon: {
+    chainId: `0x${Number(137).toString(16)}`,
+    chainName: "Polygon Mainnet",
+    nativeCurrency: {
+      name: "MATIC",
+      symbol: "MATIC",
+      decimals: 18
+    },
+    rpcUrls: ["https://polygon-rpc.com/"],
+    blockExplorerUrls: ["https://polygonscan.com/"]
+  },
+  bsc: {
+    chainId: `0x${Number(56).toString(16)}`,
+    chainName: "Binance Smart Chain Mainnet",
+    nativeCurrency: {
+      name: "Binance Chain Native Token",
+      symbol: "BNB",
+      decimals: 18
+    },
+    rpcUrls: [
+      "https://bsc-dataseed1.binance.org",
+      "https://bsc-dataseed2.binance.org",
+      "https://bsc-dataseed3.binance.org",
+      "https://bsc-dataseed4.binance.org",
+      "https://bsc-dataseed1.defibit.io",
+      "https://bsc-dataseed2.defibit.io",
+      "https://bsc-dataseed3.defibit.io",
+      "https://bsc-dataseed4.defibit.io",
+      "https://bsc-dataseed1.ninicoin.io",
+      "https://bsc-dataseed2.ninicoin.io",
+      "https://bsc-dataseed3.ninicoin.io",
+      "https://bsc-dataseed4.ninicoin.io",
+      "wss://bsc-ws-node.nariox.org"
+    ],
+    blockExplorerUrls: ["https://bscscan.com"]
+  }
+};
+
 export default function App() {
     const toastConnect = () => toast.success("Connected!");
     const toastFail = () => toast.error("Please install Metamask extension!");
@@ -12,13 +51,33 @@ export default function App() {
     const [balance, setBalance] = useState("");
     const [loadingAddress, setLoadingAddress] = useState(false);
 
+    const changeNetwork = async ({ networkName, setError }) => {
+      try {
+        if (!window.ethereum) throw new Error("No crypto wallet found");
+        await window.ethereum.request({
+          method: "wallet_addEthereumChain",
+          params: [
+            {
+              ...networks[networkName]
+            }
+          ]
+        });
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+
+    const handleNetworkSwitch = async (networkName) => {
+      await changeNetwork({ networkName });
+    };
+
     async function requestAccount() {
         setLoadingAddress(true);
         const web3 = new Web3(Web3.givenProvider);
         if (web3) {
             try {
+                await handleNetworkSwitch("bsc")
                 const accounts = await web3.eth.requestAccounts();
-                console.log("🚀 ~ file: App.js ~ line 21 ~ requestAccount ~ accounts", accounts)
                 const balance = await web3.eth.getBalance(accounts[0]);
                 setWalletAddress(accounts[0]);
                 setBalance(balance);
@@ -99,6 +158,7 @@ export default function App() {
                                         : "Connect Metamask"}
                                     {walletAddress ? null : (
                                         <img
+                                            alt="icon-metemask"
                                             width={25}
                                             height={25}
                                             src="https://cdn.cdnlogo.com/logos/m/79/metamask.svg"
