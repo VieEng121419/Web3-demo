@@ -9,7 +9,8 @@ import {
 import { toast } from "react-toastify";
 import { bscTestnet } from "viem/chains";
 import { metaMask } from "wagmi/connectors";
-import { parseEther } from "viem";
+import { formatUnits, parseEther } from "viem";
+import { useERC20Transfer } from "./ERC20Handler";
 
 const tokens = [
   {
@@ -56,6 +57,12 @@ export default function WalletConnect() {
   const [recipient, setRecipient] = useState("");
   const [showSendForm, setShowSendForm] = useState(false);
 
+  const { sendToken, decimals } = useERC20Transfer({
+    tokenAddress: address,
+    recipient,
+    amount,
+  });
+
   const { sendTransaction } = useSendTransaction({
     mutation: {
       onSuccess: () => {
@@ -76,16 +83,26 @@ export default function WalletConnect() {
   });
 
   const handleSend = async () => {
-    console.log("amount", amount);
-    console.log("recipient", recipient);
     if (!amount || !recipient) {
       toast.error("Please enter amount and recipient address");
       return;
     }
+
     try {
-      await sendTransaction({ to: recipient, value: parseEther(amount) });
+      if (selectedToken.name === "ERC20") {
+        await sendToken();
+        toast.success(
+          `Successfully sent ${amount} ${selectedToken.symbol} to ${recipient}`
+        );
+      } else {
+        await sendTransaction({ to: recipient, value: parseEther(amount) });
+      }
+      // Reset form after successful transaction
+      setAmount("");
+      setRecipient("");
     } catch (error) {
       console.error("Transaction error:", error);
+      toast.error("Transaction failed: " + error.message);
     }
   };
 
