@@ -17,22 +17,21 @@ export function useERC20Transfer({ recipient, amount, address }) {
     args: [address],
   });
 
-  console.log("rawBalance", rawBalance);
-
   const formattedBalance = rawBalance
     ? formatUnits(rawBalance, TOKENS.BUSD.decimals)
     : "0";
 
-  const { writeAsync: transfer } = useWriteContract({
-    address: TOKENS.BUSD.address,
-    abi: erc20Abi,
-    functionName: "transfer",
-  });
+  const { writeContractAsync: transfer } = useWriteContract();
 
   const sendToken = async () => {
     if (!amount || !recipient) return;
     const parsedAmount = parseUnits(amount, 18);
-    return transfer({ args: [recipient, parsedAmount] });
+    return transfer({
+      address: TOKENS.BUSD.address,
+      abi: erc20Abi,
+      functionName: "transfer",
+      args: [recipient, parsedAmount],
+    });
   };
 
   return {

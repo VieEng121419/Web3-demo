@@ -57,10 +57,11 @@ export default function WalletConnect() {
   const [recipient, setRecipient] = useState("");
   const [showSendForm, setShowSendForm] = useState(false);
 
-  const { sendToken, decimals } = useERC20Transfer({
+  const { sendToken, balance: balanceBUSD } = useERC20Transfer({
     tokenAddress: address,
     recipient,
     amount,
+    address,
   });
 
   const { sendTransaction } = useSendTransaction({
@@ -172,7 +173,17 @@ export default function WalletConnect() {
         {isConnected && (
           <div className="flex flex-row gap-5 justify-between items-center rounded-2xl border border-gray-100 shadow-sm bg-white px-5 py-3">
             <p className="font-semibold">
-              {balance?.formatted} {balance?.symbol}
+              {selectedToken.name === "BNB" ? (
+                <>
+                  <span>{balance?.formatted}</span>&nbsp;
+                  <span>{balance?.symbol}</span>
+                </>
+              ) : (
+                <>
+                  <span>{balanceBUSD?.formatted}</span>&nbsp;
+                  <span>{balanceBUSD?.symbol}</span>
+                </>
+              )}
             </p>
             <p className="font-semibold max-w-[150px]">
               {address?.slice(0, 6)}...{address?.slice(-6)}
